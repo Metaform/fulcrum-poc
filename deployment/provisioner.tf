@@ -1,13 +1,8 @@
-resource "kubernetes_namespace" "provisioner-ns" {
-  metadata {
-    name = "poc-provisioner"
-  }
-}
 
 resource "kubernetes_service_account" "provisioner-sa" {
   metadata {
     name      = "provisioner"
-    namespace = kubernetes_namespace.provisioner-ns.metadata.0.name
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
   }
 }
 
@@ -29,7 +24,7 @@ resource "kubernetes_cluster_role_binding" "provisioner-crb" {
   subject {
     kind      = "ServiceAccount"
     name      = kubernetes_service_account.provisioner-sa.metadata.0.name
-    namespace = kubernetes_namespace.provisioner-ns.metadata.0.name
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
@@ -39,10 +34,12 @@ resource "kubernetes_cluster_role_binding" "provisioner-crb" {
 }
 
 
+
+
 resource "kubernetes_deployment" "provisioner" {
   metadata {
     name      = "provisioner"
-    namespace = kubernetes_namespace.provisioner-ns.metadata.0.name
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
   }
   spec {
     replicas = "1"
@@ -59,6 +56,10 @@ resource "kubernetes_deployment" "provisioner" {
       }
       spec {
         service_account_name = kubernetes_service_account.provisioner-sa.metadata.0.name
+        image_pull_secrets {
+          name = kubernetes_secret.ghcr-secret.metadata[0].name
+        }
+
         container {
           name              = "provisioner"
           image             = "ghcr.io/paullatzelsperger/fulcrum-provisioner:latest"
@@ -66,16 +67,60 @@ resource "kubernetes_deployment" "provisioner" {
           port {
             container_port = 9999
           }
+          env {
+            name  = "FULCRUM_CORE"
+            value = "http://core-api-lb.fulcrum-core.svc.cluster.local:3000"
+          }
+
+          env {
+            name = "TOKEN"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.provisioner-agent-token.metadata.0.name
+                key = "token"
+              }
+            }
+          }
         }
       }
     }
   }
 }
 
+resource "kubernetes_secret" "provisioner-agent-token" {
+  metadata {
+    name      = "provisioner-token"
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
+  }
+
+  data = {
+    token = base64encode("j_oj0WbLObTbTewyb3LMHe0okGtnb0smVBh9cMy5shc=")
+  }
+}
+
+resource "kubernetes_secret" "ghcr-secret" {
+  metadata {
+    name      = "ghcr-secret"
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "ghcr.io" = {
+          auth = base64encode("${var.ghcr_username}:${var.ghcr_pat}")
+        }
+      }
+    })
+  }
+}
+
 resource "kubernetes_service" "provisioner-service" {
   metadata {
     name      = "provisioner-service"
-    namespace = kubernetes_namespace.provisioner-ns.metadata.0.name
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
   }
   spec {
     selector = {
@@ -92,7 +137,7 @@ resource "kubernetes_service" "provisioner-service" {
 resource "kubernetes_ingress_v1" "provisioner-ingress" {
   metadata {
     name      = "provisioner"
-    namespace = kubernetes_namespace.provisioner-ns.metadata.0.name
+    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
     annotations = {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
       "nginx.ingress.kubernetes.io/use-regex"      = "true"
