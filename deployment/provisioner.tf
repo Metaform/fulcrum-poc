@@ -71,30 +71,9 @@ resource "kubernetes_deployment" "provisioner" {
             name  = "FULCRUM_CORE"
             value = "http://core-api-lb.fulcrum-core.svc.cluster.local:3000"
           }
-
-          env {
-            name = "TOKEN"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.provisioner-agent-token.metadata.0.name
-                key = "token"
-              }
-            }
-          }
         }
       }
     }
-  }
-}
-
-resource "kubernetes_secret" "provisioner-agent-token" {
-  metadata {
-    name      = "provisioner-token"
-    namespace = kubernetes_namespace.fulcrum-ns.metadata.0.name
-  }
-
-  data = {
-    token = base64encode("j_oj0WbLObTbTewyb3LMHe0okGtnb0smVBh9cMy5shc=")
   }
 }
 
