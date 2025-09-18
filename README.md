@@ -1,28 +1,26 @@
 # Proof-of-Concept Fulcrum + EDC
 
 <!-- TOC -->
-
 * [Proof-of-Concept Fulcrum + EDC](#proof-of-concept-fulcrum--edc)
-    * [1. Introduction](#1-introduction)
-    * [2. Definition of terms](#2-definition-of-terms)
-    * [3. Prerequisites and requirements](#3-prerequisites-and-requirements)
-        * [3.1 Prerequisites](#31-prerequisites)
-        * [3.2 Kubernetes network requirements](#32-kubernetes-network-requirements)
-    * [4. Getting started](#4-getting-started)
-        * [4.1 Deploy base infrastructure](#41-deploy-base-infrastructure)
-        * [4.2 Seeding initial data](#42-seeding-initial-data)
-        * [4.3 Inspect IP addresses and IDs](#43-inspect-ip-addresses-and-ids)
-        * [4.4 Create participants](#44-create-participants)
-        * [4.5 Delete a participant](#45-delete-a-participant)
-        * [4.6 Requesting a credential](#46-requesting-a-credential)
-    * [5. Components and setup](#5-components-and-setup)
-        * [5.1 Base infrastructure](#51-base-infrastructure)
-            * [5.1.1 IssuerService](#511-issuerservice)
-            * [5.1.2 Provisioner agent](#512-provisioner-agent)
-            * [5.1.3 Credential types](#513-credential-types)
-        * [5.2 Participant infrastructure](#52-participant-infrastructure)
-    * [6. References](#6-references)
-
+  * [1. Introduction](#1-introduction)
+  * [2. Definition of terms](#2-definition-of-terms)
+  * [3. Prerequisites and requirements](#3-prerequisites-and-requirements)
+    * [3.1 Prerequisites](#31-prerequisites)
+    * [3.2 Kubernetes network requirements](#32-kubernetes-network-requirements)
+  * [4. Getting started](#4-getting-started)
+    * [4.1 Deploy base infrastructure](#41-deploy-base-infrastructure)
+    * [4.2 Seeding initial data](#42-seeding-initial-data)
+    * [4.3 Inspect IP addresses and IDs](#43-inspect-ip-addresses-and-ids)
+    * [4.4 Create participants](#44-create-participants)
+    * [4.5 Delete a participant](#45-delete-a-participant)
+    * [4.6 Requesting a credential](#46-requesting-a-credential)
+  * [5. Components and setup](#5-components-and-setup)
+    * [5.1 Base infrastructure](#51-base-infrastructure)
+      * [5.1.1 IssuerService](#511-issuerservice)
+      * [5.1.2 Provisioner agent](#512-provisioner-agent)
+      * [5.1.3 Credential types](#513-credential-types)
+    * [5.2 Participant infrastructure](#52-participant-infrastructure)
+  * [6. References](#6-references)
 <!-- TOC -->
 
 ## 1. Introduction
@@ -199,12 +197,17 @@ There are several ways to collect this information:
 
 1. on a fresh deployment, the provisioner will print this information during its startup phase, observe the
    provisioner pod's output:
-      ```text
-      Created agent ID= 79939526-c6c8-4db5-a017-b96c86d3186f                                                                                                                                                                                                    │
-      Created service type ID= 655739f1-94ff-482a-b35c-3d50a08bc6e2                                                                                                                                                                                             │
-      Created service group ID= 32d05133-6456-42e7-8de6-cfa0ccb5e52f                                                                                                                                                                                            │
-      Start polling Fulcrum Core at http://core-api-lb.fulcrum-core.svc.cluster.local:3000
-      ```
+   ```json
+    {                                                                                                                                                                                       
+       "AgentId": "79939526-c6c8-4db5-a017-b96c86d3186f",
+       "ProviderId": "4bf2a6bc-ca85-4ab7-a56b-6d0c0a4330f1",
+       "AgentTypeId": "a84f88dd-8e5a-4dd0-a43b-d8651e088cab",
+       "Name": "EDC Provisioner Agent",
+       "ServiceTypeId": "655739f1-94ff-482a-b35c-3d50a08bc6e2",
+       "ServiceGroupId": "32d05133-6456-42e7-8de6-cfa0ccb5e52f"
+    }      
+    ```
+
 2. if the data was already seeded before, for example, when a provisioner pod restarts, it will not print this
    information again. In that case,
    the [Fulcrum Core API](https://github.com/fulcrumproject/core/blob/main/docs/openapi.yaml) should be used.

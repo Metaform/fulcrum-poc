@@ -71,6 +71,10 @@ resource "kubernetes_deployment" "provisioner" {
             name  = "FULCRUM_CORE"
             value = "http://core-api-lb.fulcrum-core.svc.cluster.local:3000"
           }
+          env {
+            name = "PG_CONNECTION_STRING"
+            value = "postgres://fulcrum:fulcrum_password@postgres.fulcrum-core.svc.cluster.local:5432/fulcrum_db?sslmode=disable"
+          }
         }
       }
     }

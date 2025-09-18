@@ -24,7 +24,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "aruba-poc"
+rootProject.name = "fulcrum-poc"
 include(":extensions:superuser-seed")
 
 // launcher modules
