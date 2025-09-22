@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "provisioner" {
 
         container {
           name              = "provisioner"
-          image             = "ghcr.io/paullatzelsperger/fulcrum-provisioner:latest"
+          image             = "ghcr.io/paullatzelsperger/fulcrum-provisioner:0.0.1"
           image_pull_policy = "Always"
           port {
             container_port = 9999

@@ -112,7 +112,7 @@ resource "kubernetes_deployment" "fulcrum-core-api" {
         }
         container {
           name              = "core-api"
-          image             = "ghcr.io/paullatzelsperger/fulcrum-core:latest"
+          image             = "ghcr.io/paullatzelsperger/fulcrum-core:0.15.0"
           image_pull_policy = "Always"
           port {
             container_port = 3000
