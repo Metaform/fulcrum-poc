@@ -16,20 +16,20 @@ plugins {
     `java-library`
     id("com.bmuschko.docker-remote-api") version "9.4.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.edc.build)
 }
 
 buildscript {
     dependencies {
-        val edcGradlePluginsVersion: String by project
-        classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${edcGradlePluginsVersion}")
+        val version: String by project
+        classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${version}")
     }
 }
 
-val edcGradlePluginsVersion: String by project
+val edcbuildId = libs.plugins.edc.build.get().pluginId
 
 allprojects {
-    apply(plugin = "${group}.edc-build")
-
+    apply(plugin = edcbuildId)
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
         swagger {
             title.set("Identity HUB REST API")
