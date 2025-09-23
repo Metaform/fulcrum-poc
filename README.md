@@ -2,26 +2,27 @@
 
 <!-- TOC -->
 
-- [Proof-of-Concept Fulcrum + EDC](#proof-of-concept-fulcrum--edc)
-  - [1. Introduction](#1-introduction)
-  - [2. Definition of terms](#2-definition-of-terms)
-  - [3. Prerequisites and requirements](#3-prerequisites-and-requirements)
-    - [3.1 Prerequisites](#31-prerequisites)
-    - [3.2 Kubernetes network requirements](#32-kubernetes-network-requirements)
-  - [4. Getting started](#4-getting-started)
-    - [4.1 Deploy base infrastructure](#41-deploy-base-infrastructure)
-    - [4.2 Seeding initial data](#42-seeding-initial-data)
-    - [4.3 Inspect IP addresses and IDs](#43-inspect-ip-addresses-and-ids)
-    - [4.4 Create participants](#44-create-participants)
-    - [4.5 Delete a participant](#45-delete-a-participant)
-    - [4.6 Requesting a credential](#46-requesting-a-credential)
-  - [5. Components and setup](#5-components-and-setup)
-    - [5.1 Base infrastructure](#51-base-infrastructure)
-      - [5.1.1 IssuerService](#511-issuerservice)
-      - [5.1.2 Provisioner agent](#512-provisioner-agent)
-      - [5.1.3 Credential types](#513-credential-types)
-    - [5.2 Participant infrastructure](#52-participant-infrastructure)
-  - [6. References](#6-references)
+* [Proof-of-Concept Fulcrum + EDC](#proof-of-concept-fulcrum--edc)
+    * [1. Introduction](#1-introduction)
+    * [2. Definition of terms](#2-definition-of-terms)
+    * [3. Prerequisites and requirements](#3-prerequisites-and-requirements)
+        * [3.1 Prerequisites](#31-prerequisites)
+        * [3.2 Kubernetes network requirements](#32-kubernetes-network-requirements)
+    * [4. Getting started](#4-getting-started)
+        * [4.1 Deploy base infrastructure](#41-deploy-base-infrastructure)
+        * [4.2 Inspect IP addresses and IDs](#42-inspect-ip-addresses-and-ids)
+        * [4.3 Seeding initial data](#43-seeding-initial-data)
+        * [4.4 Create participants](#44-create-participants)
+        * [4.5 Delete a participant](#45-delete-a-participant)
+        * [4.6 Requesting a credential](#46-requesting-a-credential)
+        * [4.7 Exchange data](#47-exchange-data)
+    * [5. Components and setup](#5-components-and-setup)
+        * [5.1 Base infrastructure](#51-base-infrastructure)
+            * [5.1.1 IssuerService](#511-issuerservice)
+            * [5.1.2 Provisioner agent](#512-provisioner-agent)
+            * [5.1.3 Credential types](#513-credential-types)
+        * [5.2 Participant infrastructure](#52-participant-infrastructure)
+    * [6. References](#6-references)
 
 <!-- TOC -->
 
@@ -84,14 +85,19 @@ _All shell commands are assumed to be executed from the repository root unless s
 Some services in this PoC use an NGINX ingress controller to route HTTP requests to all the individual services and
 make them accessible from outside the cluster.
 
-On local Kubernetes development installations, for example, Proxmox VMs or bare metal, the Ingress Controller service and LoadBalancers won't automatically get
+On local Kubernetes development installations, for example, Proxmox VMs or bare metal, the Ingress Controller service
+and LoadBalancers won't automatically get
 an external IP (`ClusterIP` will only be reachable from inside the cluster), so we need another service to do that.
-MetalLB is a load-balancer implementation for bare metal Kubernetes clusters, which works well for this purpose. Please follow the instructions on the [MetalLB
+MetalLB is a load-balancer implementation for bare metal Kubernetes clusters, which works well for this purpose. Please
+follow the instructions on the [MetalLB
 installation page](https://metallb.universe.tf/installation/) to install it on your cluster.
 
-MetalLB needs an IP address pool to allocate external IPs from, at least 2 IP addresses are needed: one for the IssuerService ingress controller, one for the
-Fulcrum Core API loadbalancer service. This should be a range of IPs that are not used by other devices on your network. Whichever IP MetalLB assigns to the
-Ingress Controller, you will use that IP ("kubeHost" or "Kubernetes external IP") to access the APIs of the IssuerService and the provisioner.
+MetalLB needs an IP address pool to allocate external IPs from, at least 2 IP addresses are needed: one for the
+IssuerService ingress controller, one for the
+Fulcrum Core API loadbalancer service. This should be a range of IPs that are not used by other devices on your network.
+Whichever IP MetalLB assigns to the
+Ingress Controller, you will use that IP ("kubeHost" or "Kubernetes external IP") to access the APIs of the
+IssuerService and the provisioner.
 
 Note that most cloud providers assign an external IP to the cluster, so MetalLB is not needed there.
 
@@ -131,15 +137,18 @@ postgres-65dbd7f5-gnphm        1/1     Running   0             34s
 provisioner-5c77f4f889-gm7dh   1/1     Running   1 (31s ago)   34s
 ```
 
-Note that according to documentation, OpenTofu/Terraform _should_ respect the `$KUBECONFIG` variable, but that doesn't seem to be the case in all instances.
-Therefor, the Terraform scripts reference `~/.kube/config` directly. If your kubeconfig is located somewhere else, please run `ln -sf <your-kubeconfig>
+Note that according to documentation, OpenTofu/Terraform _should_ respect the `$KUBECONFIG` variable, but that doesn't
+seem to be the case in all instances.
+Therefor, the Terraform scripts reference `~/.kube/config` directly. If your kubeconfig is located somewhere else,
+please run `ln -sf <your-kubeconfig>
 ~/.kube/config`.
 
 **This overwrites the existing `~/.kube/config` file, so make a backup if needed.**
 
 ### 4.2 Inspect IP addresses and IDs
 
-Note that the IP address of the provisioner service will likely be different from the IP address of the Fulcrum Core API.
+Note that the IP address of the provisioner service will likely be different from the IP address of the Fulcrum Core
+API.
 This will largely depend on your local Kubernetes cluster setup: on cloud-based installations this
 might be a DNS-resolvable host name, on bare metal those IPs depend on the settings of the load balancer (we're using
 MetalLB) and on the assigned IP Pool.
@@ -164,7 +173,8 @@ For this PoC, the DID is constructed as follows:
 
 ### 4.3 Seeding initial data
 
-The IssuerService requires some initial data which we'll insert by executing the seed script. In the following example, the IP address of the ingress controller
+The IssuerService requires some initial data which we'll insert by executing the seed script. In the following example,
+the IP address of the ingress controller
 for all EDC services is `192.168.1.201`, please substitute it to fit your local setup:
 
 ```shell
@@ -193,7 +203,7 @@ Create credential definition (dataprocessor)
 
 Onboarding a participant can be done using Fulcrum Core's REST API. In Fulcrum terminology, we are creating a _Service_,
 which is the all-in-one deployment of participant resources. To do that, we require knowledge of the `serviceTypeId`,
-the `serviceGroupId` and the `agentId`.
+the, and the `agentId`.
 
 There are several ways to collect this information:
 
@@ -214,9 +224,11 @@ There are several ways to collect this information:
    }
    ```
 
-2. use the [Fulcrum Core API](https://github.com/fulcrumproject/core/blob/main/docs/openapi.yaml). This might involve several API calls and may not be the
+2. use the [Fulcrum Core API](https://github.com/fulcrumproject/core/blob/main/docs/openapi.yaml). This might involve
+   several API calls and may not be the
    quickest way.
-3. inspect the Fulcrum Core API database by connecting to the database pod with your favorite PG viewer. Port-forwards will be needed - not elegant, but
+3. inspect the Fulcrum Core API database by connecting to the database pod with your favorite PG viewer. Port-forwards
+   will be needed - not elegant, but
    possible.
 
 Using the Fulcrum Core API, we can create a _Service_ by executing
@@ -242,8 +254,10 @@ SERVICE_ID=$(curl --location 'http://192.168.1.202:3000/api/v1/services' \
 }' | jq -r ' .id ')
 ```
 
-This _Service_ will contain vital information for the provisioner in the `properties` object, namely the `participantName`, the `participantDid`, and the
-`kubeHost`. The provisioner polls the Fulcrum Core API and picks up the resulting Fulcrum _Job_. The _Job_ is claimed, resources are provisioned, and after
+This _Service_ will contain vital information for the provisioner in the `properties` object, namely the
+`participantName`, the `participantDid`, and the
+`kubeHost`. The provisioner polls the Fulcrum Core API and picks up the resulting Fulcrum _Job_. The _Job_ is claimed,
+resources are provisioned, and after
 that, the _Job_ is marked as _completed_ in Fulcrum Core.
 
 > We need to store the `SERVICE_ID` for later use, e.g. deleting the service.
@@ -262,13 +276,16 @@ curl --location --request DELETE "http://192.168.1.202:3000/api/v1/services/$SER
 --header 'Authorization: Bearer <TOKEN>'
 ```
 
-This is an asynchronous operation, so the provisioner will respond immediately with HTTP 20x. The actual deletion progress can be observed by inspecting the
+This is an asynchronous operation, so the provisioner will respond immediately with HTTP 20x. The actual deletion
+progress can be observed by inspecting the
 pods in the participant's namespace, e.g. by executing `kubectl get pods -n opiquad044 -w` until all pods are gone.
 
 ### 4.6 Requesting a credential
 
-After the participant has been created, it can request verifiable credentials from the IssuerService. For this, we use the participant's "Identity API" to talk
-to the participant's IdentitHub, which is basically the management API of the IdentityHub. Again, assuming `"192.168.1.201"` as the cluster external IP, we can
+After the participant has been created, it can request verifiable credentials from the IssuerService. For this, we use
+the participant's "Identity API" to talk
+to the participant's IdentitHub, which is basically the management API of the IdentityHub. Again, assuming
+`"192.168.1.201"` as the cluster external IP, we can
 request credentials by executing
 
 ```shell
@@ -295,15 +312,18 @@ Key elements to note here are:
 
 - the URL contains the base64-encoded identifier of the participant, which should be identical to the participant's DID
   (`"did:web:identityhub.opiquad04.svc.cluster.local:7083:opiquad04"`)
-- the `issuerDid` determines, where to send the issuance request. Technically, in a dataspace, there could be multiple issuers, so we need to specify which one
+- the `issuerDid` determines, where to send the issuance request. Technically, in a dataspace, there could be multiple
+  issuers, so we need to specify which one
   to use.
 - the `holderPid` is an arbitrary ID that can be chosen by the (prospective "holder" of the credential)
 - each object in the `credentials` array determines, which credential is to be requested. This information is available
   via the issuer's [Metadata
   API](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol/v1.0-RC4/#issuer-metadata-api), and here,
   we're requesting two credentials at once.
-  Note that it is also possible to make two individual requests, but the `holderPid` then has to be different each time. The `type`, `format` and `id` must match the
-  credential definitions that the IssuerService knows about. We created this data in step [4.3](#43-seeding-initial-data).
+  Note that it is also possible to make two individual requests, but the `holderPid` then has to be different each time.
+  The `type`, `format` and `id` must match the
+  credential definitions that the IssuerService knows about. We created this data in
+  step [4.3](#43-seeding-initial-data).
 
 Credential issuance is also an asynchronous process, so the request immediately returns with HTTP 201. After a while,
 the IdentityHub's logs should display
@@ -320,12 +340,132 @@ identityhub DEBUG 2025-08-26T06:42:41.205526897 [StorageAPI] HolderCredentialReq
 From that point forward, the `MembershipCredential` and the `DataProcessorCredential` are held by our participant
 "opiquad04" and can be used for presentation.
 
+### 4.7 Exchange data
+
+Now this is the big one: let’s provision two participants: one consumer and one provider. To do that, we need to call
+the Fulcrum Core API (see [section 4.4](#44-create-participants))
+and create two participants
+
+First we create the consumer, called `opiquadc`:
+
+```shell
+SERVICE_ID=$(curl --fail --location 'http://localhost:3000/api/v1/services' \
+  --header 'Content-Type: application/json' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer change-me' \
+  --data '{
+    "name": "EDC Deployment Consumer Company (opiquadc)",
+    "serviceTypeId": "b7d41935-7f39-47b0-9a57-fe198d1af317",
+    "groupId": "803fd64c-c761-4cdf-8b6e-535f5f1473f7",
+    "properties": {
+      "participantName": "opiquadc",
+      "participantDid": "did:web:identityhub.opiquadc.svc.cluster.local%3A7083:opiquadc",
+      "kubeHost": "192.168.1.201"
+  },
+  "agentTags": [
+    "cfm", "edc"
+  ],
+  "agentId": "e341ae76-815a-4d22-9305-5e799dccbe09"
+  }' | jq '.id')
+```
+
+> **Important: let the entire deployment finish and settle down before continuing. Inspect the provisioner pod logs for
+that.**
+
+next, we create the provider, called `opiquadp`:
+
+```shell
+SERVICE_ID2=$(curl --fail --location 'http://localhost:3000/api/v1/services' \
+  --header 'Content-Type: application/json' \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer change-me' \
+  --data '{
+    "name": "EDC Deployment Consumer Company (opiquadp)",
+    "serviceTypeId": "b7d41935-7f39-47b0-9a57-fe198d1af317",
+    "groupId": "803fd64c-c761-4cdf-8b6e-535f5f1473f7",
+    "properties": {
+      "participantName": "opiquadp",
+      "participantDid": "did:web:identityhub.opiquadp.svc.cluster.local%3A7083:opiquadp",
+      "kubeHost": "192.168.1.201"
+  },
+  "agentTags": [
+    "cfm", "edc"
+  ],
+  "agentId": "e341ae76-815a-4d22-9305-5e799dccbe09"
+  }' | jq '.id')
+```
+
+Once both those deployments are up and running, we can request credentials for both participants,
+see [section 4.6](#46-requesting-a-credential), and start the negotiation process. For that, import
+the [Postman collection](./postman)
+into Postman, or a similar tool, and execute the requests one after the other.
+
+Before we can do that, though, we need to populate a few collection variables:
+
+- `EDC_HOST`: should point to the IP address of the NGINX ingress controller, in the snippets above, that'd be
+  `192.168.1.201`
+- `CONSUMER`: should be `opiquadc`
+- `CONSUMER_BASE64`: should be the base64 web DID of the consumer
+  `ZGlkOndlYjppZGVudGl0eWh1Yi5vcGlxdWFkYy5zdmMuY2x1c3Rlci5sb2NhbCUzQTcwODM6b3BpcXVhZGM=`
+- `PROVIDER`: should be `opiquadp`
+- `PROVIDER_ID`: should be `did:web:identityhub.opiquadp.svc.cluster.local%3A7083:opiquadp`
+- `PROVIDER_BASE64`: should be the base64-encoded `PROVIDER_ID`, i.e.
+  `ZGlkOndlYjppZGVudGl0eWh1Yi5vcGlxdWFkcC5zdmMuY2x1c3Rlci5sb2NhbCUzQTcwODM6b3BpcXVhZHA=`
+
+Note that there is no variable for `CONSUMER_ID` because we don't need it. Note also, that a few variables are as yet
+empty. We will populate them as we go through the requests.
+
+Now execute all requests in the collection:
+
+![img.png](resources/img.png)
+
+The `Get All Assets` and `Check all credentials` requests are not required, but are a good way to check that the
+provisioning process has been successful. 
+
+It should be enough to simply execute one request after another. A few things to note:
+
+- poll the contract negotiations until the response contains a `"state": "FINALIZED"` entry
+- then start the transfer, again, polling the transfer requests until the response contains the `"state": "STARTED"` field, 
+
+Click through the rest of the requests, including `Download data from provider`. If everything worked, you should see a JSON response like this:
+```json lines
+[
+  {
+    "userId": 1,
+    "id": 1,
+    "title": "delectus aut autem",
+    "completed": false
+  },
+  {
+    "userId": 1,
+    "id": 2,
+    "title": "quis ut nam facilis et officia qui",
+    "completed": false
+  },
+  //...
+]
+```
+
+This means we've just downloaded data from the provider's data plane, using all of EDC's negotiation and transfer features!
+
+### 4.7.1 Cleanup
+
+To clean up the deployment, simply delete the services: 
+
+```shell
+curl --location --request DELETE http://localhost:3000/api/v1/services/$SERVICE_ID \
+  --header 'Accept: application/json' \
+  --header 'Authorization: Bearer <TOKEN>'
+```
+(do the same for `$SERVICE_ID2`)
+
 ## 5. Components and setup
 
 The PoC consists of two main classes of components:
 
-1. base infrastructure, consisting of Fulcrum Core, the IssuerService and the provisioner agent
-2. participant infrastructure, consists of the Identity Hub, the Control Plane and the Data Plane plus their dependencies (primarily PostgreSQL and Vault).
+1. base infrastructure, consisting of Fulcrum Core, the IssuerService, and the provisioner agent
+2. participant infrastructure, consists of the Identity Hub, the Control Plane and the Data Plane plus their
+   dependencies (primarily PostgreSQL and Vault).
 
 The following diagram illustrates the overall architecture:
 
@@ -333,13 +473,17 @@ The following diagram illustrates the overall architecture:
 
 ### 5.1 Base infrastructure
 
-The base infrastructure (shown in orange and pink) is deployed once per cluster and consists of Fulcrum Core, the IssuerService and the Provisioner agent. This
-is done by running the Terraform/OpenTofu scripts in the `deployment` folder, see [section 3.3](#41-deploy-base-infrastructure) for details.
+The base infrastructure (shown in orange and pink) is deployed once per cluster and consists of Fulcrum Core, the
+IssuerService, and the Provisioner agent. This
+is done by running the Terraform/OpenTofu scripts in the `deployment` folder,
+see [section 3.3](#41-deploy-base-infrastructure) for details.
 
 #### 5.1.1 IssuerService
 
-This is a DCP-compliant issuer service that receives verifiable credential requests from participants and issues the requested credentials. It is based on the
-[reference implementation](https://github.com/eclipse-edc/IdentityHub/blob/main/docs/developer/architecture/issuer/issuance/issuance.process.md) of the
+This is a DCP-compliant issuer service that receives verifiable credential requests from participants and issues the
+requested credentials. It is based on the
+[reference implementation](https://github.com/eclipse-edc/IdentityHub/blob/main/docs/developer/architecture/issuer/issuance/issuance.process.md)
+of the
 [Decentralized Claims Protocol](https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol).
 
 In short, the IssuerService uses so-called `CredentialDefinitions` to generate Verifiable Credentials for participants.
@@ -381,7 +525,8 @@ in [this GitHub repository](https://github.com/Metaform/fulcrum-provisioner)._
 
 #### 5.1.3 Credential types
 
-In this PoC there are two types of credentials: a `MembershipCredential`, which attests to a participant being an active member of the dataspace, and a
+In this PoC there are two types of credentials: a `MembershipCredential`, which attests to a participant being an active
+member of the dataspace, and a
 `DataProcessorCredential`, which attests to a participant's access level - either `"processing"` or `"sensitive"`.
 
 When issuing a `MembershipCredential`, the `MembershipAttestationSource` creates the following credential subject:
@@ -404,7 +549,8 @@ When issuing a `DataProcessorCredential`, the `DataProcessorAttestationSource` c
 }
 ```
 
-These credentials are used to authenticate and authorize DSP/DCP requests from one connector to another. Each new dataspace member will receive both
+These credentials are used to authenticate and authorize DSP/DCP requests from one connector to another. Each new
+dataspace member will receive both
 credentials.
 
 ### 5.2 Participant infrastructure
@@ -419,7 +565,7 @@ and the IssuerService.
 ## 6. References
 
 | Reference                       | Link                                                                    | Used for                                                              |
-| ------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+|---------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | Decentralized Claims Protocol   | <https://eclipse-dataspace-dcp.github.io/decentralized-claims-protocol> | Defines the protocol for presenting and issuing Verifiable Credentisl |
 | Dataspace Protocol              | <https://eclipse-dataspace-protocol-base.github.io/DataspaceProtocol>   | Standard for data exchange and interoperability in dataspaces         |
 | Decentralized Identifiers (DID) | <https://www.w3.org/TR/did-1.0/>                                        | Unique, verifiable digital identifiers                                |
