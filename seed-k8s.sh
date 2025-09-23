@@ -103,6 +103,11 @@ curl -s --location "http://${HOST}/issuer/ad/api/admin/v1alpha/participants/ZGlk
     "jsonSchemaUrl": "https://example.com/schema/membership-credential.json",
     "mappings": [
         {
+          "input": "membership",
+          "output": "credentialSubject.membership",
+          "required": true
+        },
+        {
             "input": "membershipType",
             "output": "credentialSubject.membershipType",
             "required": "true"
