@@ -1,647 +1,722 @@
 {
-  "info": {
-    "name": "Fulcrum PoC - EDC data transfer",
-    "description": "",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Check all credentials (consumer)",
-      "event": [],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "auth": {
-          "type": "apikey",
-          "apikey": [
-            {
-              "key": "key",
-              "value": "X-Api-Key",
-              "type": "string"
-            },
-            {
-              "key": "value",
-              "value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
-              "type": "string"
-            }
-          ]
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/credentials",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cs",
-            "api",
-            "identity",
-            "v1alpha",
-            "credentials"
-          ],
-          "query": [],
-          "variable": []
-        }
-      }
-    },
-    {
-      "name": "Check all credentials (provider)",
-      "event": [],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "auth": {
-          "type": "apikey",
-          "apikey": [
-            {
-              "key": "key",
-              "value": "X-Api-Key",
-              "type": "string"
-            },
-            {
-              "key": "value",
-              "value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
-              "type": "string"
-            }
-          ]
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/credentials",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cs",
-            "api",
-            "identity",
-            "v1alpha",
-            "credentials"
-          ],
-          "query": [],
-          "variable": []
-        }
-      }
-    },
-    {
-      "name": "Download data from provider",
-      "event": [],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "auth": {
-          "type": "apikey",
-          "apikey": [
-            {
-              "key": "key",
-              "value": "Authorization",
-              "type": "string"
-            },
-            {
-              "key": "value",
-              "value": "{{AUTHORIZATION}}",
-              "type": "string"
-            }
-          ]
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{PROVIDER}}/public/api/public",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{PROVIDER}}",
-            "public",
-            "api",
-            "public"
-          ],
-          "query": [],
-          "variable": []
-        }
-      }
-    },
-    {
-      "name": "Get All Assets (just to check)",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/assets/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "assets",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Get Provider's Catalog",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/catalog/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "catalog",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Get all endpoint information",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/edrs/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "edrs",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Get endpoint information for transfer",
-      "event": [],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "edrs",
-            "{{TRANSFER_PROCESS_ID}}",
-            "dataaddress"
-          ],
-          "query": [],
-          "variable": []
-        }
-      }
-    },
-    {
-      "name": "Initiate Contract Negotiation",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/contractnegotiations",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "contractnegotiations"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"odrl:Offer\",\n        \"@id\": \"{{POLICY_ID_ASSET_1}}\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"obligation\": [],\n        \"prohibition\": [],\n        \"permission\": {\n            \"action\": \"odrl:use\",\n            \"constraint\": {\n                \"leftOperand\": {\n                    \"@id\": \"MembershipCredential\"\n                },\n                \"operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Obtain Credentials (consumer)",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          },
-          {
-            "key": "X-Api-Key",
-            "value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/participants/{{CONSUMER_BASE64}}/credentials/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cs",
-            "api",
-            "identity",
-            "v1alpha",
-            "participants",
-            "{{CONSUMER_BASE64}}",
-            "credentials",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"issuerDid\": \"did:web:dataspace-issuer-service.poc-issuer.svc.cluster.local%3A10016:issuer\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"MembershipCredential\",\n        \"id\": \"membership-credential-def\"\n    },\n    {\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"DataProcessorCredential\",\n        \"id\": \"dataprocessor-credential-def\"\n    }]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Obtain Credentials (provider)",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          },
-          {
-            "key": "X-Api-Key",
-            "value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{PROVIDER}}/cs/api/identity/v1alpha/participants/{{PROVIDER_BASE64}}/credentials/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{PROVIDER}}",
-            "cs",
-            "api",
-            "identity",
-            "v1alpha",
-            "participants",
-            "{{PROVIDER_BASE64}}",
-            "credentials",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"issuerDid\": \"did:web:dataspace-issuer-service.poc-issuer.svc.cluster.local%3A10016:issuer\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"MembershipCredential\",\n        \"id\": \"membership-credential-def\"\n    },\n    {\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"DataProcessorCredential\",\n        \"id\": \"dataprocessor-credential-def\"\n    }]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Poll Contract Negotiations",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/contractnegotiations/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "contractnegotiations",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n   \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Poll Transfer Requests",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          },
-          {
-            "key": "X-Api-Key",
-            "value": "password",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/transferprocesses/request",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "transferprocesses",
-            "request"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Start Transfer Process",
-      "event": [],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "disabled": false,
-            "type": "default"
-          }
-        ],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/transferprocesses",
-          "protocol": "",
-          "host": [
-            "{{EDC_HOST}}"
-          ],
-          "path": [
-            "{{CONSUMER}}",
-            "cp",
-            "api",
-            "management",
-            "v3",
-            "transferprocesses"
-          ],
-          "query": [],
-          "variable": []
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"{{AGREEMENT_ID}}\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        }
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "EDC_HOST",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "CONSUMER",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "PROVIDER",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "AUTHORIZATION",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "PROVIDER_ID",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "TRANSFER_PROCESS_ID",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "POLICY_ID_ASSET_1",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "CONSUMER_BASE64",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "PROVIDER_BASE64",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "AGREEMENT_ID",
-      "value": "",
-      "type": "default"
-    }
-  ]
+	"info": {
+		"_postman_id": "97a2a79f-ccfa-4d50-81f1-1de6faa03808",
+		"name": "Fulcrum PoC - EDC data transfer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "647585"
+	},
+	"item": [
+		{
+			"name": "Get All Assets (just to check)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/assets/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"assets",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtain Credentials (consumer)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Api-Key",
+						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"issuerDid\": \"did:web:dataspace-issuer-service.poc-issuer.svc.cluster.local%3A10016:issuer\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"MembershipCredential\",\n        \"id\": \"membership-credential-def\"\n    },\n    {\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"DataProcessorCredential\",\n        \"id\": \"dataprocessor-credential-def\"\n    }]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/participants/{{CONSUMER_BASE64}}/credentials/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cs",
+						"api",
+						"identity",
+						"v1alpha",
+						"participants",
+						"{{CONSUMER_BASE64}}",
+						"credentials",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtain Credentials (provider)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Api-Key",
+						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"issuerDid\": \"did:web:dataspace-issuer-service.poc-issuer.svc.cluster.local%3A10016:issuer\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"MembershipCredential\",\n        \"id\": \"membership-credential-def\"\n    },\n    {\n        \"format\": \"VC1_0_JWT\",\n        \"type\": \"DataProcessorCredential\",\n        \"id\": \"dataprocessor-credential-def\"\n    }]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{PROVIDER}}/cs/api/identity/v1alpha/participants/{{PROVIDER_BASE64}}/credentials/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{PROVIDER}}",
+						"cs",
+						"api",
+						"identity",
+						"v1alpha",
+						"participants",
+						"{{PROVIDER_BASE64}}",
+						"credentials",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check all credentials (consumer)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Api-Key",
+						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+					}
+				],
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/credentials",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cs",
+						"api",
+						"identity",
+						"v1alpha",
+						"credentials"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check all credentials (provider)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Api-Key",
+						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+					}
+				],
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cs/api/identity/v1alpha/credentials",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cs",
+						"api",
+						"identity",
+						"v1alpha",
+						"credentials"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Provider's Catalog",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// get the policy id of \"asset-1\" and save it as an environment variable",
+							"if(pm.response.code < 300 && pm.response.code >= 200){",
+							"    const dcat_datasets = pm.response.json()[\"dcat:dataset\"]",
+							"    const asset_1 = dcat_datasets.find((asset) => asset[\"@id\"] == \"asset-1\")",
+							"    const id = asset_1[\"odrl:hasPolicy\"][\"@id\"]",
+							"    pm.collectionVariables.set(\"POLICY_ID_ASSET_1\", id);    ",
+							"}",
+							"",
+							"pm.test(\"Status code is >=200 and <300\", function () {",
+							"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+							"});",
+							"pm.test(\"Policy id for asset1 is set\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"POLICY_ID_ASSET_1\")).not.to.be.undefined",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/catalog/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"catalog",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initiate Contract Negotiation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"CONTRACT_NEGOTIATION_ID\", pm.response.json()[\"@id\"])",
+							"",
+							"pm.test(\"Status code is >=200 and <300\", function () {",
+							"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+							"});",
+							"pm.test(\"Contract negotiation id is set\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"CONTRACT_NEGOTIATION_ID\")).not.to.be.undefined",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"odrl:Offer\",\n        \"@id\": \"{{POLICY_ID_ASSET_1}}\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"obligation\": [],\n        \"prohibition\": [],\n        \"permission\": {\n            \"action\": \"odrl:use\",\n            \"constraint\": {\n                \"leftOperand\": {\n                    \"@id\": \"MembershipCredential\"\n                },\n                \"operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/contractnegotiations",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"contractnegotiations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Poll Contract Negotiations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// get the contact agreement id and save it as an environment variable",
+							"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+							"    var find_negotiation;",
+							"    if (pm.collectionVariables.has(\"CONTRACT_NEGOTIATION_ID\")){",
+							"        find_negotiation = pm.response.json().find((el) => el[\"@id\"] == pm.collectionVariables.get(\"CONTRACT_NEGOTIATION_ID\"))",
+							"    }",
+							"",
+							"    if(find_negotiation){",
+							"        const contractAgreementId = find_negotiation[\"contractAgreementId\"];",
+							"        pm.collectionVariables.set(\"AGREEMENT_ID\", contractAgreementId);",
+							"    }",
+							"}",
+							"",
+							"pm.test(\"Status code is >=200 and <300\", function () {",
+							"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+							"});",
+							"pm.test(\"Contract Agreement ID is set\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"AGREEMENT_ID\")).not.to.be.undefined",
+							"})",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/contractnegotiations/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"contractnegotiations",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Transfer Process",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"http://controlplane.{{PROVIDER}}.svc.cluster.local:8082/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"{{AGREEMENT_ID}}\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/transferprocesses",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"transferprocesses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Poll Transfer Requests",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Api-Key",
+						"value": "password"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/transferprocesses/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"transferprocesses",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all endpoint information",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// get the transfer process id of \"asset-1\" and save it as an environment variable if the response body is not empty",
+							"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+							"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
+							"  pm.collectionVariables.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
+							"}",
+							"",
+							"pm.test(\"Status code is >=200 and <300\", function () {",
+							"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+							"});",
+							"pm.test(\"Transfer process id is set\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"TRANSFER_PROCESS_ID\")).not.to.be.undefined",
+							"})",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/edrs/request",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"edrs",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get endpoint information for transfer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// extract the endpoint URL and the authorization header",
+							"if(pm.response.code < 300 && pm.response.code >= 200 ){",
+							"  const url = pm.response.json().endpoint",
+							"  pm.collectionVariables.set(\"ENDPOINT\", url);",
+							"",
+							"  const auth = pm.response.json().authorization",
+							"  pm.collectionVariables.set(\"AUTHORIZATION\", auth);",
+							"}",
+							"",
+							"pm.test(\"Endpoint should be defined\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"ENDPOINT\")).to.not.be.undefined;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Auth token should be defined\", function(){",
+							"    pm.expect(pm.collectionVariables.get(\"AUTHORIZATION\")).to.not.be.undefined;",
+							"});",
+							"",
+							"pm.test(\"Status code is >=200 and <300\", function () {",
+							"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{EDC_HOST}}/{{CONSUMER}}/cp/api/management/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{CONSUMER}}",
+						"cp",
+						"api",
+						"management",
+						"v3",
+						"edrs",
+						"{{TRANSFER_PROCESS_ID}}",
+						"dataaddress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download data from provider",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{AUTHORIZATION}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{EDC_HOST}}/{{PROVIDER}}/public/api/public",
+					"host": [
+						"{{EDC_HOST}}"
+					],
+					"path": [
+						"{{PROVIDER}}",
+						"public",
+						"api",
+						"public"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-api-key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "EDC_HOST",
+			"value": ""
+		},
+		{
+			"key": "CONSUMER",
+			"value": ""
+		},
+		{
+			"key": "CONSUMER_BASE64",
+			"value": ""
+		},
+		{
+			"key": "PROVIDER_BASE64",
+			"value": ""
+		},
+		{
+			"key": "PROVIDER_ID",
+			"value": ""
+		},
+		{
+			"key": "PROVIDER",
+			"value": ""
+		},
+		{
+			"key": "POLICY_ID_ASSET_1",
+			"value": ""
+		},
+		{
+			"key": "CONTRACT_NEGOTIATION_ID",
+			"value": ""
+		},
+		{
+			"key": "AGREEMENT_ID",
+			"value": ""
+		},
+		{
+			"key": "TRANSFER_PROCESS_ID",
+			"value": ""
+		},
+		{
+			"key": "ENDPOINT",
+			"value": ""
+		},
+		{
+			"key": "AUTHORIZATION",
+			"value": ""
+		}
+	]
 }
